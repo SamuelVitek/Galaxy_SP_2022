@@ -1,8 +1,8 @@
 public class Planet {
     private String name;
-    private PlanetTypes type;
+    private String type;
     private int xPosition, yPosition;
-    private int xSpeed, ySpeed;
+    private double xSpeed, ySpeed;
     private double weight;
 
     /**
@@ -15,7 +15,7 @@ public class Planet {
      * @param ySpeed rychlost planety v ramci osy x
      * @param weight vaha planety
      */
-    public Planet(String name, PlanetTypes type, int xPosition, int yPosition, int xSpeed, int ySpeed, double weight) {
+    public Planet(String name, String type, int xPosition, int yPosition, double xSpeed, double ySpeed, double weight) {
         this.name = name;
         this.type = type;
         this.xPosition = xPosition;

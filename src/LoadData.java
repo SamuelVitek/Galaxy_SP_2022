@@ -1,8 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.net.URL;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -11,16 +10,36 @@ import java.util.Scanner;
  * @author Samuel Vítek
  */
 public class LoadData {
-    private double G;
-   // private HashMap<>
+    private double g;
+    private double timeStep;
+    private List<Planet> planets = new ArrayList<>();
 
     public LoadData(String name) {
         try {
             File myObj = new File("data/" + name);
             Scanner myReader = new Scanner(myObj);
+            String[] firsRow = myReader.nextLine().split(",");
+            g = Double.parseDouble(firsRow[0]);
+            timeStep = Double.parseDouble(firsRow[1]);
+
             while (myReader.hasNextLine()) {
                 String data = myReader.nextLine();
-                System.out.println(data);
+                if (data.equals("")) {
+                    System.out.println("Posledni radek souboru je prazdny.");
+                    return;
+                }
+
+                String[] explodedData = data.split(",");
+
+                planets.add(new Planet(
+                        explodedData[0],
+                        explodedData[1],
+                        Integer.parseInt(explodedData[2]),
+                        Integer.parseInt(explodedData[3]),
+                        Double.parseDouble(explodedData[4]),
+                        Double.parseDouble(explodedData[5]),
+                        Double.parseDouble(explodedData[6])
+                ));
             }
             myReader.close();
         } catch (FileNotFoundException e) {
@@ -28,5 +47,7 @@ public class LoadData {
         }
     }
 
-
+    public List<Planet> getPlanets() {
+        return planets;
+    }
 }
