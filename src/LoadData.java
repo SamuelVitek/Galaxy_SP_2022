@@ -50,4 +50,12 @@ public class LoadData {
     public List<Planet> getPlanets() {
         return planets;
     }
+
+    public double getG() {
+        return g;
+    }
+
+    public double getTimeStep() {
+        return timeStep;
+    }
 }
