@@ -16,7 +16,5 @@ public class Galaxy_SP2022 {
 		okno.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		okno.setLocationRelativeTo(null);
 		okno.setVisible(true);
-
-		LoadData ld = new LoadData("pulsar.csv");
 	}
 }

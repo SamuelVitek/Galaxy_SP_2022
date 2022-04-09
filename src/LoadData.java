@@ -34,8 +34,8 @@ public class LoadData {
                 planets.add(new Planet(
                         explodedData[0],
                         explodedData[1],
-                        Integer.parseInt(explodedData[2]),
-                        Integer.parseInt(explodedData[3]),
+                        Double.parseDouble(explodedData[2]),
+                        Double.parseDouble(explodedData[3]),
                         Double.parseDouble(explodedData[4]),
                         Double.parseDouble(explodedData[5]),
                         Double.parseDouble(explodedData[6])

@@ -1,9 +1,10 @@
 public class Planet {
     private String name;
     private String type;
-    private int xPosition, yPosition;
+    private double xPosition, yPosition;
     private double xSpeed, ySpeed;
     private double weight;
+    private double r;
 
     /**
      * Tridni konstruktor definujici planetu
@@ -15,7 +16,7 @@ public class Planet {
      * @param ySpeed rychlost planety v ramci osy x
      * @param weight vaha planety
      */
-    public Planet(String name, String type, int xPosition, int yPosition, double xSpeed, double ySpeed, double weight) {
+    public Planet(String name, String type, double xPosition, double yPosition, double xSpeed, double ySpeed, double weight) {
         this.name = name;
         this.type = type;
         this.xPosition = xPosition;
@@ -23,5 +24,42 @@ public class Planet {
         this.xSpeed = xSpeed;
         this.ySpeed = ySpeed;
         this.weight = weight;
+        this.r = r();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public double getxPosition() {
+        return xPosition;
+    }
+
+    public double getyPosition() {
+        return yPosition;
+    }
+
+    public double getxSpeed() {
+        return xSpeed;
+    }
+
+    public double getySpeed() {
+        return ySpeed;
+    }
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public double r() {
+        return Math.cbrt(weight / (3.0/4.0) * Math.PI);
+    }
+
+    public double getR() {
+        return r;
     }
 }
