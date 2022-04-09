@@ -1,7 +1,6 @@
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
+import java.util.List;
 
 import javax.swing.JPanel;
 
@@ -18,9 +17,18 @@ public class DrawingPanel extends JPanel {
 
 		g2.translate(getWidth()/2, getHeight()/2);
 
-		Ellipse2D tryf = new Ellipse2D.Double(0,0,10,10);
-		g2.setColor(Color.BLUE);
-		g2.fill(tryf);
+		LoadData ld = new LoadData("negative.csv");
+		List<Planet> planets = ld.getPlanets();
+
+		double scale;
+		Ellipse2D planetDraw;
+
+		for (Planet planet : planets) {
+			planetDraw = new Ellipse2D.Double(planet.getxPosition(), planet.getyPosition(), planet.getR(), planet.getR());
+
+			g2.setColor(Color.BLUE);
+			g2.fill(planetDraw);
+		}
 	}
 
 }
