@@ -12,6 +12,10 @@ import java.util.Scanner;
 public class LoadData {
     private double g;
     private double timeStep;
+    private double spaceStartX;
+    private double spaceEndX;
+    private double spaceStartY;
+    private double spaceEndY;
     private List<Planet> planets = new ArrayList<>();
 
     public LoadData(String name) {
@@ -31,7 +35,7 @@ public class LoadData {
 
                 String[] explodedData = data.split(",");
 
-                planets.add(new Planet(
+                Planet actualPlanet = new Planet(
                         explodedData[0],
                         explodedData[1],
                         Double.parseDouble(explodedData[2]),
@@ -39,7 +43,23 @@ public class LoadData {
                         Double.parseDouble(explodedData[4]),
                         Double.parseDouble(explodedData[5]),
                         Double.parseDouble(explodedData[6])
-                ));
+                );
+
+                planets.add(actualPlanet);
+
+                if (Double.parseDouble(explodedData[2]) < spaceStartX) {
+                    spaceStartX = Double.parseDouble(explodedData[2]) - actualPlanet.getR() / 2;
+                }
+                else if (Double.parseDouble(explodedData[2]) > spaceEndX) {
+                    spaceEndX = Double.parseDouble(explodedData[2]) + actualPlanet.getR() / 2;
+                }
+
+                if (Double.parseDouble(explodedData[3]) < spaceStartY) {
+                    spaceStartY = Double.parseDouble(explodedData[3]) - actualPlanet.getR() / 2;
+                }
+                else if (Double.parseDouble(explodedData[3]) > spaceEndY) {
+                    spaceEndY = Double.parseDouble(explodedData[3]) + actualPlanet.getR() / 2;
+                }
             }
             myReader.close();
         } catch (FileNotFoundException e) {
@@ -57,5 +77,21 @@ public class LoadData {
 
     public double getTimeStep() {
         return timeStep;
+    }
+
+    public double getSpaceEndX() {
+        return spaceEndX;
+    }
+
+    public double getSpaceStartX() {
+        return spaceStartX;
+    }
+
+    public double getSpaceEndY() {
+        return spaceEndY;
+    }
+
+    public double getSpaceStartY() {
+        return spaceStartY;
     }
 }
