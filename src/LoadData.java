@@ -12,10 +12,6 @@ import java.util.Scanner;
 public class LoadData {
     private double g;
     private double timeStep;
-    private double spaceStartX = Double.MAX_VALUE;
-    private double spaceEndX = -Double.MAX_VALUE;
-    private double spaceStartY = Double.MAX_VALUE;
-    private double spaceEndY = -Double.MAX_VALUE;
     private List<Planet> planets = new ArrayList<>();
 
     public LoadData(String name) {
@@ -46,20 +42,6 @@ public class LoadData {
                 );
 
                 planets.add(actualPlanet);
-
-                if ((Double.parseDouble(explodedData[2]) - actualPlanet.getR() / 2) < spaceStartX) {
-                    spaceStartX = Double.parseDouble(explodedData[2]) - actualPlanet.getR() / 2;
-                }
-                else if ((Double.parseDouble(explodedData[2]) + actualPlanet.getR() / 2) > spaceEndX) {
-                    spaceEndX = Double.parseDouble(explodedData[2]) + actualPlanet.getR() / 2;
-                }
-
-                if ((Double.parseDouble(explodedData[3]) - actualPlanet.getR() / 2) < spaceStartY) {
-                    spaceStartY = Double.parseDouble(explodedData[3]) - actualPlanet.getR() / 2;
-                }
-                else if ((Double.parseDouble(explodedData[3]) + actualPlanet.getR() / 2) > spaceEndY) {
-                    spaceEndY = Double.parseDouble(explodedData[3]) + actualPlanet.getR() / 2;
-                }
             }
             myReader.close();
         } catch (FileNotFoundException e) {
@@ -77,21 +59,5 @@ public class LoadData {
 
     public double getTimeStep() {
         return timeStep;
-    }
-
-    public double getSpaceEndX() {
-        return spaceEndX;
-    }
-
-    public double getSpaceStartX() {
-        return spaceStartX;
-    }
-
-    public double getSpaceEndY() {
-        return spaceEndY;
-    }
-
-    public double getSpaceStartY() {
-        return spaceStartY;
     }
 }
