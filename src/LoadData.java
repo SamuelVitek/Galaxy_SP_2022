@@ -12,10 +12,10 @@ import java.util.Scanner;
 public class LoadData {
     private double g;
     private double timeStep;
-    private double spaceStartX;
-    private double spaceEndX;
-    private double spaceStartY;
-    private double spaceEndY;
+    private double spaceStartX = Double.MAX_VALUE;
+    private double spaceEndX = -Double.MAX_VALUE;
+    private double spaceStartY = Double.MAX_VALUE;
+    private double spaceEndY = -Double.MAX_VALUE;
     private List<Planet> planets = new ArrayList<>();
 
     public LoadData(String name) {
@@ -42,22 +42,22 @@ public class LoadData {
                         Double.parseDouble(explodedData[3]),
                         Double.parseDouble(explodedData[4]),
                         Double.parseDouble(explodedData[5]),
-                        Double.parseDouble(explodedData[6])
+                        Math.abs(Double.parseDouble(explodedData[6]))
                 );
 
                 planets.add(actualPlanet);
 
-                if (Double.parseDouble(explodedData[2]) < spaceStartX) {
+                if ((Double.parseDouble(explodedData[2]) - actualPlanet.getR() / 2) < spaceStartX) {
                     spaceStartX = Double.parseDouble(explodedData[2]) - actualPlanet.getR() / 2;
                 }
-                else if (Double.parseDouble(explodedData[2]) > spaceEndX) {
+                else if ((Double.parseDouble(explodedData[2]) + actualPlanet.getR() / 2) > spaceEndX) {
                     spaceEndX = Double.parseDouble(explodedData[2]) + actualPlanet.getR() / 2;
                 }
 
-                if (Double.parseDouble(explodedData[3]) < spaceStartY) {
+                if ((Double.parseDouble(explodedData[3]) - actualPlanet.getR() / 2) < spaceStartY) {
                     spaceStartY = Double.parseDouble(explodedData[3]) - actualPlanet.getR() / 2;
                 }
-                else if (Double.parseDouble(explodedData[3]) > spaceEndY) {
+                else if ((Double.parseDouble(explodedData[3]) + actualPlanet.getR() / 2) > spaceEndY) {
                     spaceEndY = Double.parseDouble(explodedData[3]) + actualPlanet.getR() / 2;
                 }
             }
