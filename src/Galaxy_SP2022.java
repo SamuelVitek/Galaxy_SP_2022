@@ -13,7 +13,8 @@ public class Galaxy_SP2022 {
 		okno.setTitle("Galaxy Seminární Práce - Samuel Vítek, A21B0315P");
 		okno.setSize(640, 480);
 
-		DrawingPanel panel = new DrawingPanel();
+		//DrawingPanel panel = new DrawingPanel(args[0]);
+		DrawingPanel panel = new DrawingPanel("data/pulsar.csv");
 		okno.add(panel);
 
 		okno.pack();
@@ -45,10 +46,6 @@ public class Galaxy_SP2022 {
 				panel.repaint();
 
 				setWasStopped(false);
-			}
-
-			public double getTime() {
-				return time;
 			}
 		});
 		timer.start();
@@ -107,7 +104,4 @@ public class Galaxy_SP2022 {
 		isStopped = true;
 		setWasStopped(true);
 	}
-//	public double t() {
-//		return al.getTime();
-//	}
 }

@@ -56,7 +56,13 @@ public class Planet {
     }
 
     public double r() {
-        return Math.cbrt(weight / (4.0/3.0) * Math.PI);
+        double r = Math.cbrt(weight / (4.0/3.0) * Math.PI);
+
+        if (r > 1E6) {
+            return 1E11;
+        } else {
+            return r;
+        }
     }
 
     public double getR() {

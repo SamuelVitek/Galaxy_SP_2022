@@ -6,8 +6,8 @@ import java.util.List;
 import javax.swing.JPanel;
 
 public class DrawingPanel extends JPanel {
-	private final LoadData ld = new LoadData("data/collision.csv");
-	private final List<Planet> planets = ld.getPlanets();
+	private final LoadData ld;
+	private final List<Planet> planets;
 	private List<Ellipse2D> drawnPlanets;
 	private double spaceStartX;
 	private double spaceEndX;
@@ -16,8 +16,10 @@ public class DrawingPanel extends JPanel {
 	private Planet clickedPlanet = null;
 	private double time;
 
-	public DrawingPanel() {
+	public DrawingPanel(String path) {
 		this.setPreferredSize(new Dimension(800, 600));
+		this.ld = new LoadData(path);
+		this.planets = ld.getPlanets();
 	}
 
 	@Override
@@ -34,8 +36,6 @@ public class DrawingPanel extends JPanel {
 
 		double centerX = (spaceEndX + spaceStartX) / 2;
 		double centerY = (spaceEndY + spaceStartY) / 2;
-
-		//System.out.println("spaceWidth: " + spaceWidth);
 
 		double scaleX = this.getWidth() / spaceWidth;
 		double scaleY = this.getHeight() / spaceHeight;
@@ -63,20 +63,35 @@ public class DrawingPanel extends JPanel {
 
 			drawnPlanets.add(planetDraw);
 
+			String text = "Time: " + time + "s ";
+			String name = "Name: " + planet.getName() + " ";
+			String position = "Position [" + planet.getxPosition() + ";" + planet.getyPosition() + "] ";
+			String speed = "Speed [" + planet.getxSpeed() + ";" + planet.getySpeed() + "] ";
+
+			g2.setColor(Color.BLACK);
+			int stringWidth;
+			g2.setFont(new Font("Arial", Font.PLAIN, 18));
+
 			if (planet.equals(clickedPlanet)) {
-				g2.setColor(Color.RED);
+				g2.setColor(Color.BLACK);
+				stringWidth = g2.getFontMetrics().stringWidth(name);
+				g2.drawString(name, this.getWidth() - stringWidth, 36);
+
+				stringWidth = g2.getFontMetrics().stringWidth(position);
+				g2.drawString(position, this.getWidth() - stringWidth, 54);
+
+				stringWidth = g2.getFontMetrics().stringWidth(speed);
+				g2.drawString(speed, this.getWidth() - stringWidth, 72);
 			} else {
 				g2.setColor(Color.BLUE);
 			}
-			g2.fill(planetDraw);
-		}
 
-		String text = "Time: " + time + "s ";
-		g2.setFont(new Font("Arial", Font.BOLD, 18));
-		g2.setColor(Color.BLACK);
-		int stringWidth = g2.getFontMetrics().stringWidth(text);
-		int stringHeight = 18;
-		g2.drawString(text, this.getWidth() - stringWidth, stringHeight);
+			g2.fill(planetDraw);
+
+			g2.setColor(Color.BLACK);
+			stringWidth = g2.getFontMetrics().stringWidth(text);
+			g2.drawString(text, this.getWidth() - stringWidth, 18);
+		}
 	}
 
 	public void update(double t) {
