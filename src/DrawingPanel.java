@@ -1,13 +1,17 @@
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JPanel;
 
 public class DrawingPanel extends JPanel {
-	private double time;
-	private final LoadData ld = new LoadData("collision.csv");
+	private final LoadData ld = new LoadData("negative.csv");
 	private final List<Planet> planets = ld.getPlanets();
+	private double spaceStartX;
+	private double spaceEndX;
+	private double spaceStartY;
+	private double spaceEndY;
 
 	public DrawingPanel() {
 		this.setPreferredSize(new Dimension(800, 600));
@@ -19,15 +23,21 @@ public class DrawingPanel extends JPanel {
 
 		Graphics2D g2 = (Graphics2D)g;
 
-		double spaceWidth = ld.getSpaceEndX() - ld.getSpaceStartX();
-		double spaceHeight = ld.getSpaceEndY() - ld.getSpaceStartY();
+		spaceXY();
 
-		double centerX = (ld.getSpaceEndX() + ld.getSpaceStartX()) / 2;
-		double centerY = (ld.getSpaceEndY() + ld.getSpaceStartY()) / 2;
+		double spaceWidth = spaceEndX - spaceStartX;
+		double spaceHeight = spaceEndY - spaceStartY;
+
+		double centerX = (spaceEndX + spaceStartX) / 2;
+		double centerY = (spaceEndY + spaceStartY) / 2;
+
+		//System.out.println("spaceWidth: " + spaceWidth);
 
 		double scaleX = this.getWidth() / spaceWidth;
 		double scaleY = this.getHeight() / spaceHeight;
 		double scale = Math.min(scaleX, scaleY);
+
+		System.out.println("Scale: " + scale);
 
 		Ellipse2D planetDraw;
 
@@ -53,7 +63,7 @@ public class DrawingPanel extends JPanel {
 	}
 
 	public void update(double t) {
-		double dt_min = ld.getTimeStep() / 100;
+		double dt_min = ld.getTimeStep() / 10000;
 
 		while (t > 0) {
 			double dt = Math.min(t, dt_min);
@@ -65,32 +75,31 @@ public class DrawingPanel extends JPanel {
 				//x-ove souradnice rychlosti a pozic a jejich vypocty
 				double vix = planet.getxSpeed();
 				double pix = planet.getxPosition();
-
-				vix += 0.5 * dt * aix;
-				pix += dt * vix;
-				vix += 0.5 * dt * aix;
-
-				planet.setxSpeed(vix);
-				planet.setxPosition(pix);
-
-				//y-ove souradnice rychlosti a pozic
 				double viy = planet.getySpeed();
 				double piy = planet.getyPosition();
 
+				vix += 0.5 * dt * aix;
 				viy += 0.5 * dt * aiy;
-				piy += dt * viy;
-				viy += 0.5 * dt * aiy;
-
+				planet.setxSpeed(vix);
 				planet.setySpeed(viy);
-				planet.setyPosition(piy);
-			}
 
-			t = t - dt;
+				pix += dt * vix;
+				piy += dt * viy;
+				planet.setxPosition(pix);
+				planet.setyPosition(piy);
+
+				vix += 0.5 * dt * aix;
+				viy += 0.5 * dt * aiy;
+				planet.setxSpeed(vix);
+				planet.setySpeed(viy);
+			}
+			t -= dt;
 		}
 	}
 
 	public double[] computeAcceleration(Planet i) {
-		List<Planet> newPlanets = planets;
+		List<Planet> newPlanets = new ArrayList<>(planets);
+
 		newPlanets.remove(i);
 
 		double accelerationX = 0;
@@ -102,20 +111,36 @@ public class DrawingPanel extends JPanel {
 			double denominator = Math.sqrt((px * px) + (py * py));
 			accelerationX += ld.getG() * j.getWeight()	* (px / Math.pow(denominator, 3.0));
 			accelerationY += ld.getG() * j.getWeight()	* (py / Math.pow(denominator, 3.0));
+
+			//System.out.println(j.getName() + " : " + accelerationX);
 		}
 
 		return new double[]{accelerationX, accelerationY};
 	}
 
-	public void setTime(double time) {
-		this.time = time;
+	public double getTimeStep() {
+		return ld.getTimeStep();
 	}
 
-	public double getTime() {
-		return time;
-	}
+	public void spaceXY() {
+		spaceStartX = Double.MAX_VALUE;
+		spaceEndX = -Double.MAX_VALUE;
+		spaceStartY = Double.MAX_VALUE;
+		spaceEndY = -Double.MAX_VALUE;
 
-	public double getTimePeriod() {
-		return 1000 / ld.getTimeStep();
+		for (Planet planet : planets) {
+			if ((planet.getxPosition() - planet.getR() / 2) < spaceStartX) {
+				spaceStartX = planet.getxPosition() - planet.getR() / 2;
+			}
+			if ((planet.getxPosition() + planet.getR() / 2) > spaceEndX) {
+				spaceEndX = planet.getxPosition() + planet.getR() / 2;
+			}
+			if ((planet.getyPosition() - planet.getR() / 2) < spaceStartY) {
+				spaceStartY = planet.getyPosition() - planet.getR() / 2;
+			}
+			if ((planet.getyPosition() + planet.getR() / 2) > spaceEndY) {
+				spaceEndY = planet.getyPosition() + planet.getR() / 2;
+			}
+		}
 	}
 }
