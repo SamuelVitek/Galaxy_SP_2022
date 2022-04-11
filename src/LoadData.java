@@ -12,11 +12,11 @@ import java.util.Scanner;
 public class LoadData {
     private double g;
     private double timeStep;
-    private List<Planet> planets = new ArrayList<>();
+    private final List<Planet> planets = new ArrayList<>();
 
     public LoadData(String name) {
         try {
-            File myObj = new File("data/" + name);
+            File myObj = new File(name);
             Scanner myReader = new Scanner(myObj);
             String[] firsRow = myReader.nextLine().split(",");
             g = Double.parseDouble(firsRow[0]);

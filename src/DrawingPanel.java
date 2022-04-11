@@ -6,12 +6,15 @@ import java.util.List;
 import javax.swing.JPanel;
 
 public class DrawingPanel extends JPanel {
-	private final LoadData ld = new LoadData("negative.csv");
+	private final LoadData ld = new LoadData("data/collision.csv");
 	private final List<Planet> planets = ld.getPlanets();
+	private List<Ellipse2D> drawnPlanets;
 	private double spaceStartX;
 	private double spaceEndX;
 	private double spaceStartY;
 	private double spaceEndY;
+	private Planet clickedPlanet = null;
+	private double time;
 
 	public DrawingPanel() {
 		this.setPreferredSize(new Dimension(800, 600));
@@ -22,6 +25,7 @@ public class DrawingPanel extends JPanel {
 		super.paint(g);
 
 		Graphics2D g2 = (Graphics2D)g;
+		drawnPlanets = new ArrayList<>();
 
 		spaceXY();
 
@@ -57,9 +61,22 @@ public class DrawingPanel extends JPanel {
 					scaledR,
 					scaledR);
 
-			g2.setColor(Color.BLUE);
+			drawnPlanets.add(planetDraw);
+
+			if (planet.equals(clickedPlanet)) {
+				g2.setColor(Color.RED);
+			} else {
+				g2.setColor(Color.BLUE);
+			}
 			g2.fill(planetDraw);
 		}
+
+		String text = "Time: " + time + "s ";
+		g2.setFont(new Font("Arial", Font.BOLD, 18));
+		g2.setColor(Color.BLACK);
+		int stringWidth = g2.getFontMetrics().stringWidth(text);
+		int stringHeight = 18;
+		g2.drawString(text, this.getWidth() - stringWidth, stringHeight);
 	}
 
 	public void update(double t) {
@@ -142,5 +159,26 @@ public class DrawingPanel extends JPanel {
 				spaceEndY = planet.getyPosition() + planet.getR() / 2;
 			}
 		}
+	}
+
+	public void isPlanetHit(double x, double y) {
+		for (Ellipse2D i : drawnPlanets) {
+			if (i.contains(x, y)) {
+				if (clickedPlanet == null) {
+					clickedPlanet = planets.get(drawnPlanets.indexOf(i));
+				} else {
+					clickedPlanet = null;
+				}
+
+				this.repaint();
+				return;
+			}
+		}
+
+		clickedPlanet = null;
+	}
+
+	public void setTime(double time) {
+		this.time += time;
 	}
 }

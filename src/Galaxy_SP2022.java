@@ -1,8 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 
 public class Galaxy_SP2022 {
 	private static Timer timer;
@@ -29,6 +27,7 @@ public class Galaxy_SP2022 {
 		timer = new Timer(timerPeriod, new ActionListener() {
 			long startTime = System.currentTimeMillis();
 			long endTime;
+			double time;
 			final Galaxy_SP2022 g = new Galaxy_SP2022();
 
 			@Override
@@ -38,11 +37,18 @@ public class Galaxy_SP2022 {
 					endTime = startTime;
 				}
 
-				panel.update((double) (endTime - startTime) / 1000.0 * panel.getTimeStep());
+				time = (double) (endTime - startTime) / 1000.0 * panel.getTimeStep();
+				panel.setTime(time);
+				panel.update(time);
+
 				startTime = System.currentTimeMillis();
 				panel.repaint();
 
 				setWasStopped(false);
+			}
+
+			public double getTime() {
+				return time;
 			}
 		});
 		timer.start();
@@ -59,6 +65,31 @@ public class Galaxy_SP2022 {
 
 					return false;
 				});
+
+		panel.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseClicked(MouseEvent e) {}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				panel.isPlanetHit(e.getX(), e.getY());
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+
+			}
+		});
 	}
 
 	private static void startAnimation() {
@@ -76,5 +107,7 @@ public class Galaxy_SP2022 {
 		isStopped = true;
 		setWasStopped(true);
 	}
-
+//	public double t() {
+//		return al.getTime();
+//	}
 }
