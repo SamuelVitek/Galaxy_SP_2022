@@ -1,10 +1,10 @@
 public class Planet {
-    private String name;
-    private String type;
+    private final String name;
+    private final String type;
     private double xPosition, yPosition;
     private double xSpeed, ySpeed;
-    private double weight;
-    private double r;
+    private final double weight;
+    private final double r;
 
     /**
      * Tridni konstruktor definujici planetu
