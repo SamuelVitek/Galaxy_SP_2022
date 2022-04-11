@@ -62,4 +62,21 @@ public class Planet {
     public double getR() {
         return r;
     }
+
+    public void setxPosition(double xPosition) {
+        this.xPosition = xPosition;
+    }
+
+    public void setyPosition(double yPosition) {
+        this.yPosition = yPosition;
+    }
+
+    public void setxSpeed(double xSpeed) {
+        this.xSpeed = xSpeed;
+    }
+
+    public void setySpeed(double ySpeed) {
+        this.ySpeed = ySpeed;
+    }
+
 }
