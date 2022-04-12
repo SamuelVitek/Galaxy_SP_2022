@@ -2,19 +2,31 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+/**
+ * Třída pro spuštění celé simulace
+ *
+ * @author Samuel Vítek
+ */
 public class Galaxy_SP2022 {
+	/** Atribut odkazující na instanci timeru */
 	private static Timer timer;
+	/** Kontrola, jestli je timer aktuálně zastaven */
 	private static boolean isStopped = false;
+	/** Kontrola, jestli byl timer zastaven v minulém běhu */
 	private static boolean wasStopped;
 
+	/**
+	 * Hlavní spouštěcí metoda pro spuštění animace a její automatické překreslování
+	 *
+	 * @param args parametrem se předává cesta k souboru s daty
+	 */
 	public static void main(String[] args) {
 		JFrame okno = new JFrame();
 
 		okno.setTitle("Galaxy Seminární Práce - Samuel Vítek, A21B0315P");
 		okno.setSize(640, 480);
 
-		//DrawingPanel panel = new DrawingPanel(args[0]);
-		DrawingPanel panel = new DrawingPanel("data/pulsar.csv");
+		DrawingPanel panel = new DrawingPanel(args[0]);
 		okno.add(panel);
 
 		okno.pack();
@@ -25,12 +37,21 @@ public class Galaxy_SP2022 {
 
 		int timerPeriod = (int) panel.getTimeStep();
 
+		//Nastavení timeru a vytvoření actionListeneru
 		timer = new Timer(timerPeriod, new ActionListener() {
+			/** Počáteční čas */
 			long startTime = System.currentTimeMillis();
+			/** Konečný čas */
 			long endTime;
+			/** Celkový čas */
 			double time;
+			/** Reference na třídu Galexy_SP2022 */
 			final Galaxy_SP2022 g = new Galaxy_SP2022();
 
+			/**
+			 * Přepsaná metoda pro překreselní panelu
+			 * @param e action event
+			 */
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				endTime = System.currentTimeMillis();
@@ -50,6 +71,7 @@ public class Galaxy_SP2022 {
 		});
 		timer.start();
 
+		//Zachycení stisku mezerníku a zavolání zastavení animace
 		KeyboardFocusManager.getCurrentKeyboardFocusManager()
 				.addKeyEventDispatcher(a -> {
 					if (a.getID() == KeyEvent.KEY_PRESSED && a.getKeyCode() == KeyEvent.VK_SPACE) {
@@ -63,6 +85,7 @@ public class Galaxy_SP2022 {
 					return false;
 				});
 
+		//Zachycení akce myší a zavolání příslušné metody nad panelem
 		panel.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseClicked(MouseEvent e) {}
@@ -89,16 +112,35 @@ public class Galaxy_SP2022 {
 		});
 	}
 
+	/**
+	 * Spuštění animace
+	 */
 	private static void startAnimation() {
 		timer.start();
 		isStopped = false;
 	}
+
+	/**
+	 * Nastavení, jestli byla animace zastavena od minulého vykreslení
+	 *
+	 * @param s hodnota true/false
+	 */
 	public static void setWasStopped(boolean s) {
 		wasStopped = s;
 	}
+
+	/**
+	 * Vrátí hodnotu, jestli byla animace zastavena od minulého vykreslení
+	 *
+	 * @return hodnota true/false
+	 */
 	public boolean getWasStopped() {
 		return wasStopped;
 	}
+
+	/**
+	 * Zastavení animace
+	 */
 	public static void stopAnimation() {
 		timer.stop();
 		isStopped = true;
