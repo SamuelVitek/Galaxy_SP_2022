@@ -2,26 +2,46 @@ import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.JPanel;
 
+/**
+ * Třída DrawinPanel vytváří panel nesoucí všechny infomrace
+ * načtené planety, výpočty pro překreslení nebo kontrolu, jestli byla hvězda zasažena myší
+ *
+ * @author Samuel Vítek
+ */
 public class DrawingPanel extends JPanel {
-	private final LoadData ld;
+
+	/** Atribut odkazující na načtená data */
+	private final LoadData loadedData;
+	/** Kolekce nesoucí informace o všech načtenýc planetách */
 	private final List<Planet> planets;
+	/** Kolekce nesoucí informace o vykreslených objektech, představujících planety */
 	private List<Ellipse2D> drawnPlanets;
-	private double spaceStartX;
-	private double spaceEndX;
-	private double spaceStartY;
-	private double spaceEndY;
+	/** Atribut pro rozlišení planety, která je aktuálně zakliknuta */
 	private Planet clickedPlanet = null;
+	/** Atributy ukládající začátek a konec vesmíru */
+	private double spaceStartX, spaceEndX;
+	private double spaceStartY, spaceEndY;
+	/** Atribut ukládající aktuální čas běhu */
 	private double time;
 
+	/**
+	 * Konstruktor třídy DrawingPanel
+	 *
+	 * @param path předaná cesta k souboru s daty
+	 */
 	public DrawingPanel(String path) {
 		this.setPreferredSize(new Dimension(800, 600));
-		this.ld = new LoadData(path);
-		this.planets = ld.getPlanets();
+		this.loadedData = new LoadData(path);
+		this.planets = loadedData.getPlanets();
 	}
 
+	/**
+	 * Přepsaná metoda pro vykreslení panelu
+	 *
+	 * @param g grafické rozhraní
+	 */
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
@@ -31,6 +51,7 @@ public class DrawingPanel extends JPanel {
 
 		spaceXY();
 
+		//Výpočty scale a pozicování planet podle středu okna
 		double spaceWidth = spaceEndX - spaceStartX;
 		double spaceHeight = spaceEndY - spaceStartY;
 
@@ -41,10 +62,9 @@ public class DrawingPanel extends JPanel {
 		double scaleY = this.getHeight() / spaceHeight;
 		double scale = Math.min(scaleX, scaleY);
 
-		System.out.println("Scale: " + scale);
-
 		Ellipse2D planetDraw;
 
+		//Vykreslení jednotlivých planet
 		for (Planet planet : planets) {
 
 			double scaledR = planet.getR() * scale;
@@ -72,6 +92,7 @@ public class DrawingPanel extends JPanel {
 			int stringWidth;
 			g2.setFont(new Font("Arial", Font.PLAIN, 18));
 
+			//Kontrola jestli je zakliknutá jedna z planet, nastavení barvy a vypsání informací
 			if (planet.equals(clickedPlanet)) {
 				g2.setColor(Color.BLACK);
 				stringWidth = g2.getFontMetrics().stringWidth(name);
@@ -94,8 +115,13 @@ public class DrawingPanel extends JPanel {
 		}
 	}
 
+	/**
+	 * Metoda pro aktualizaci stavu vesmíru, výpočet nových souřadnic
+	 *
+	 * @param t čas od posledního zavolaní této metody
+	 */
 	public void update(double t) {
-		double dt_min = ld.getTimeStep() / 10000;
+		double dt_min = loadedData.getTimeStep() / 10000;
 
 		while (t > 0) {
 			double dt = Math.min(t, dt_min);
@@ -104,7 +130,7 @@ public class DrawingPanel extends JPanel {
 				double aix = computeAcceleration(planet)[0];
 				double aiy = computeAcceleration(planet)[1];
 
-				//x-ove souradnice rychlosti a pozic a jejich vypocty
+				//souradnice rychlosti a pozic a jejich vypocty
 				double vix = planet.getxSpeed();
 				double pix = planet.getxPosition();
 				double viy = planet.getySpeed();
@@ -129,6 +155,12 @@ public class DrawingPanel extends JPanel {
 		}
 	}
 
+	/**
+	 * Metoda pro výpočet vektoru zrychlení pomocí vzorce N-objektů
+	 *
+	 * @param i planeta, pro kterou se má výpočet provést
+	 * @return vektor zrychlení v poli
+	 */
 	public double[] computeAcceleration(Planet i) {
 		List<Planet> newPlanets = new ArrayList<>(planets);
 
@@ -141,25 +173,33 @@ public class DrawingPanel extends JPanel {
 			double px = j.getxPosition() - i.getxPosition();
 			double py = j.getyPosition() - i.getyPosition();
 			double denominator = Math.sqrt((px * px) + (py * py));
-			accelerationX += ld.getG() * j.getWeight()	* (px / Math.pow(denominator, 3.0));
-			accelerationY += ld.getG() * j.getWeight()	* (py / Math.pow(denominator, 3.0));
-
-			//System.out.println(j.getName() + " : " + accelerationX);
+			accelerationX += loadedData.getG() * j.getWeight()	* (px / Math.pow(denominator, 3.0));
+			accelerationY += loadedData.getG() * j.getWeight()	* (py / Math.pow(denominator, 3.0));
 		}
 
 		return new double[]{accelerationX, accelerationY};
 	}
 
+	/**
+	 * Getter pro předání časového kroku z podkladového souboru
+	 *
+	 * @return časový krok za 1s
+	 */
 	public double getTimeStep() {
-		return ld.getTimeStep();
+		return loadedData.getTimeStep();
 	}
 
+	/**
+	 * Metoda pro přepočítání velikosti vesmíru
+	 * použitá v metodě paint
+	 */
 	public void spaceXY() {
 		spaceStartX = Double.MAX_VALUE;
 		spaceEndX = -Double.MAX_VALUE;
 		spaceStartY = Double.MAX_VALUE;
 		spaceEndY = -Double.MAX_VALUE;
 
+		//Procházení planet a kontorly, které souřadnice jsou nejmenší
 		for (Planet planet : planets) {
 			if ((planet.getxPosition() - planet.getR() / 2) < spaceStartX) {
 				spaceStartX = planet.getxPosition() - planet.getR() / 2;
@@ -176,6 +216,12 @@ public class DrawingPanel extends JPanel {
 		}
 	}
 
+	/**
+	 * Metoda pro zjištění, zda-li byla planeta zasažena myší
+	 *
+	 * @param x místo, kde byl zaznamenán klik myši na x-ove ose
+	 * @param y místo, kde byl zaznamenán klik myši na y-ove ose
+	 */
 	public void isPlanetHit(double x, double y) {
 		for (Ellipse2D i : drawnPlanets) {
 			if (i.contains(x, y)) {
@@ -193,6 +239,11 @@ public class DrawingPanel extends JPanel {
 		clickedPlanet = null;
 	}
 
+	/**
+	 * Metoda pro nastavení aktuálního uběhlého času
+	 *
+	 * @param time uběhlý čas doposud
+	 */
 	public void setTime(double time) {
 		this.time += time;
 	}
