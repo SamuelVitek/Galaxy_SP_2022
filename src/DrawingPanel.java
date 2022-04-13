@@ -25,6 +25,8 @@ public class DrawingPanel extends JPanel {
 	private double spaceStartY, spaceEndY;
 	/** Atribut ukládající aktuální čas běhu */
 	private double time;
+	/** Atribut ukládající hodnotu škálování */
+	double scale;
 
 	/**
 	 * Konstruktor třídy DrawingPanel
@@ -60,7 +62,7 @@ public class DrawingPanel extends JPanel {
 
 		double scaleX = this.getWidth() / spaceWidth;
 		double scaleY = this.getHeight() / spaceHeight;
-		double scale = Math.min(scaleX, scaleY);
+		scale = Math.min(scaleX, scaleY);
 
 		Ellipse2D planetDraw;
 
@@ -68,6 +70,10 @@ public class DrawingPanel extends JPanel {
 		for (Planet planet : planets) {
 
 			double scaledR = planet.getR() * scale;
+
+			if(scaledR < 0.5) {
+				scaledR = 5;
+			}
 
 			double scaledPosX = ((planet.getxPosition() - centerX)  * scale) - scaledR / 2;
 			double scaledPosY = ((planet.getyPosition() - centerY) * scale) - scaledR / 2;

@@ -35,7 +35,7 @@ public class Galaxy_SP2022 {
 		okno.setLocationRelativeTo(null);
 		okno.setVisible(true);
 
-		int timerPeriod = (int) panel.getTimeStep();
+		int timerPeriod = 1;
 
 		//Nastavení timeru a vytvoření actionListeneru
 		timer = new Timer(timerPeriod, new ActionListener() {
