@@ -18,8 +18,10 @@ public class Planet {
     private final double weight;
     /** Poloměr planety */
     private final double r;
-    private ArrayList<Double> speeds = new ArrayList<>();
-    private ArrayList<Double> times = new ArrayList<>();
+    /** List rychlostí */
+    private final ArrayList<Double> speeds = new ArrayList<>();
+    /** List časů */
+    private final ArrayList<Double> times = new ArrayList<>();
 
     /**
      * Tridni konstruktor definujici planetu
@@ -160,22 +162,44 @@ public class Planet {
         this.ySpeed = ySpeed;
     }
 
+    /**
+     * Nastaví skalární rychlost planety
+     * @param speed rychlost
+     */
     public void setSpeed(double speed) {
         this.speeds.add(speed);
     }
 
+    /**
+     * Vrátí rychlost planety na daném indexu
+     * @param i index
+     * @return rychlost planety
+     */
     public double getSpeed(int i) {
         return speeds.get(i);
     }
 
+    /**
+     * Vrátí čas na daném indexu
+     * @param i index
+     * @return rychlost planety
+     */
     public double getTime(int i) {
         return times.get(i);
     }
 
+    /**
+     * Nastaví čas
+     * @param time čas
+     */
     public void setTime(double time) {
         this.times.add(time);
     }
 
+    /**
+     * Vrátí velikost pole s rychlostmi
+     * @return velikost pole
+     */
     public int arrayLength() {
         return this.speeds.size();
     }

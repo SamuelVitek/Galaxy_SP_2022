@@ -266,6 +266,9 @@ public class DrawingPanel extends JPanel {
 		this.time += time;
 	}
 
+	/**
+	 * Ošetření kolize dvou planet
+	 */
 	public void collision() {
 		for (Ellipse2D i : drawnPlanets) {
 			for (Ellipse2D j : drawnPlanets) {
@@ -290,7 +293,7 @@ public class DrawingPanel extends JPanel {
 							/ (biggerPlanet.getWeight() + smallerPlanet.getWeight());
 
 					Planet newOne = new Planet(
-							biggerPlanet.getName() + "2",
+							biggerPlanet.getName() + " - collision",
 							biggerPlanet.getType(),
 							biggerPlanet.getxPosition(),
 							biggerPlanet.getyPosition(),
@@ -311,6 +314,10 @@ public class DrawingPanel extends JPanel {
 		}
 	}
 
+	/**
+	 * Vytvoří nový spojnicový graf
+	 * @return instance JFreeChart - spojnicový graf
+	 */
 	public JFreeChart makeLineChart() {
 		dataset = createDataset();
 
@@ -327,6 +334,11 @@ public class DrawingPanel extends JPanel {
 		return chart;
 	}
 
+	/**
+	 * Krom vytvoření nového datasetu také aktualizuje starý dataset při opětovném zavolání
+	 *
+	 * @return dataset vhodný pro vytvoření spojnicového grafu
+	 */
 	public DefaultCategoryDataset createDataset() {
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 		if (clickedPlanet != null && clickedPlanet.arrayLength() > 30) {
@@ -346,6 +358,11 @@ public class DrawingPanel extends JPanel {
 		return null;
 	}
 
+	/**
+	 * Přidání hodnot rychlostí a časů do listů jednotlivých planet
+	 *
+	 * @param sec sekundy
+	 */
 	public void setSpeedAndTime(int sec) {
 		for (Planet planet : planets) {
 			planet.setSpeed((Math.sqrt((planet.getxSpeed() * planet.getxSpeed()) + (planet.getySpeed() * planet.getySpeed())) * 3.6));
@@ -353,11 +370,10 @@ public class DrawingPanel extends JPanel {
 		}
 	}
 
+	/**
+	 * Nastaví právě zakliknutou planetu na null
+	 */
 	public void setClickedPlanetToNull() {
 		this.clickedPlanet = null;
-	}
-
-	public Planet getClickedPlanet() {
-		return this.clickedPlanet;
 	}
 }

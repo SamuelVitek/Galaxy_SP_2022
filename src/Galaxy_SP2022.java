@@ -1,5 +1,4 @@
 import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,8 +16,8 @@ public class Galaxy_SP2022 {
 	private static boolean isStopped = false;
 	/** Kontrola, jestli byl timer zastaven v minulém běhu */
 	private static boolean wasStopped;
-	static JFrame graph = new JFrame();
-	static ChartPanel chartPanel;
+	/** Panel s odkazem na graf dané planety */
+	private static ChartPanel chartPanel;
 
 	/**
 	 * Hlavní spouštěcí metoda pro spuštění animace a její automatické překreslování
@@ -32,6 +31,7 @@ public class Galaxy_SP2022 {
 		okno.setSize(640, 480);
 
 		DrawingPanel panel = new DrawingPanel(args[0]);
+		//Pro manuální předávání dat
 		//DrawingPanel panel = new DrawingPanel("data/collision.csv");
 		okno.add(panel);
 
@@ -172,7 +172,13 @@ public class Galaxy_SP2022 {
 		setWasStopped(true);
 	}
 
+	/**
+	 * Vytvoří nové okno s grafem pro danou planetu
+	 *
+	 * @param panel odkaz na instanci drawing panelu
+	 */
 	public static void createNewWindow(DrawingPanel panel) {
+		JFrame graph = new JFrame();
 		graph.setTitle("Graf");
 		graph.setSize(400, 300);
 
@@ -180,6 +186,9 @@ public class Galaxy_SP2022 {
 
 		graph.add(chartPanel);
 
+		graph.pack();
+
+		//Ošetření "deselectu" planety při zavření grafu
 		graph.addWindowListener(new java.awt.event.WindowAdapter() {
 			@Override
 			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
