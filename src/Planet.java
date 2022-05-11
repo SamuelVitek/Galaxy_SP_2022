@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /**
  * Třída držící hlavní informace o planetě
  *
@@ -16,6 +18,8 @@ public class Planet {
     private final double weight;
     /** Poloměr planety */
     private final double r;
+    private ArrayList<Double> speeds = new ArrayList<>();
+    private ArrayList<Double> times = new ArrayList<>();
 
     /**
      * Tridni konstruktor definujici planetu
@@ -156,4 +160,23 @@ public class Planet {
         this.ySpeed = ySpeed;
     }
 
+    public void setSpeed(double speed) {
+        this.speeds.add(speed);
+    }
+
+    public double getSpeed(int i) {
+        return speeds.get(i);
+    }
+
+    public double getTime(int i) {
+        return times.get(i);
+    }
+
+    public void setTime(double time) {
+        this.times.add(time);
+    }
+
+    public int arrayLength() {
+        return this.speeds.size();
+    }
 }

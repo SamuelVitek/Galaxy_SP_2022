@@ -1,3 +1,9 @@
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.CategoryLabelPositions;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.data.category.DefaultCategoryDataset;
+
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
@@ -27,6 +33,10 @@ public class DrawingPanel extends JPanel {
 	private double time;
 	/** Atribut ukládající hodnotu škálování */
 	double scale;
+	double vix,viy;
+	double finalVx, finalVy;
+
+	DefaultCategoryDataset dataset = createDataset();
 
 	/**
 	 * Konstruktor třídy DrawingPanel
@@ -119,6 +129,8 @@ public class DrawingPanel extends JPanel {
 			stringWidth = g2.getFontMetrics().stringWidth(text);
 			g2.drawString(text, this.getWidth() - stringWidth, 18);
 		}
+
+		collision();
 	}
 
 	/**
@@ -137,9 +149,9 @@ public class DrawingPanel extends JPanel {
 				double aiy = computeAcceleration(planet)[1];
 
 				//souradnice rychlosti a pozic a jejich vypocty
-				double vix = planet.getxSpeed();
+				vix = planet.getxSpeed();
 				double pix = planet.getxPosition();
-				double viy = planet.getySpeed();
+				viy = planet.getySpeed();
 				double piy = planet.getyPosition();
 
 				vix += 0.5 * dt * aix;
@@ -252,5 +264,100 @@ public class DrawingPanel extends JPanel {
 	 */
 	public void setTime(double time) {
 		this.time += time;
+	}
+
+	public void collision() {
+		for (Ellipse2D i : drawnPlanets) {
+			for (Ellipse2D j : drawnPlanets) {
+				if (!i.equals(j) && i.intersects(j.getX(), j.getY(), j.getWidth(), j.getHeight())) {
+					Planet biggerPlanet;
+					Planet smallerPlanet;
+
+					if (i.getWidth() >= j.getWidth()) {
+						biggerPlanet = planets.get(drawnPlanets.indexOf(i));
+						smallerPlanet = planets.get(drawnPlanets.indexOf(j));
+					} else {
+						biggerPlanet = planets.get(drawnPlanets.indexOf(j));
+						smallerPlanet = planets.get(drawnPlanets.indexOf(i));
+					}
+
+					finalVx = ((biggerPlanet.getWeight() * biggerPlanet.getxSpeed())
+							+ (smallerPlanet.getWeight() * smallerPlanet.getxSpeed()))
+							/ (biggerPlanet.getWeight() + smallerPlanet.getWeight());
+
+					finalVy = ((biggerPlanet.getWeight() * biggerPlanet.getxSpeed())
+							+ (smallerPlanet.getWeight() * smallerPlanet.getxSpeed()))
+							/ (biggerPlanet.getWeight() + smallerPlanet.getWeight());
+
+					Planet newOne = new Planet(
+							biggerPlanet.getName() + "2",
+							biggerPlanet.getType(),
+							biggerPlanet.getxPosition(),
+							biggerPlanet.getyPosition(),
+							finalVx,
+							finalVy,
+							biggerPlanet.getWeight() + smallerPlanet.getWeight());
+
+					planets.add(newOne);
+
+					drawnPlanets.remove(i);
+					drawnPlanets.remove(j);
+					planets.remove(biggerPlanet);
+					planets.remove(smallerPlanet);
+
+					return;
+				}
+			}
+		}
+	}
+
+	public JFreeChart makeLineChart() {
+		dataset = createDataset();
+
+		JFreeChart chart = ChartFactory.createLineChart(
+				"Speed in time", // Chart title
+				"Time [s]", // X-Axis Label
+				"Speed [km/h]", // Y-Axis Label
+				dataset
+		);
+
+		CategoryPlot plot = chart.getCategoryPlot();
+		plot.getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.DOWN_45);
+
+		return chart;
+	}
+
+	public DefaultCategoryDataset createDataset() {
+		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+		if (clickedPlanet != null && clickedPlanet.arrayLength() > 30) {
+			for (int i = clickedPlanet.arrayLength() - 30; i < clickedPlanet.arrayLength(); i++) {
+				dataset.addValue(clickedPlanet.getSpeed(i), "IDK", String.valueOf(clickedPlanet.getTime(i)));
+			}
+			this.dataset = dataset;
+			return dataset;
+		} else if (clickedPlanet != null){
+			for (int i = 0; i < clickedPlanet.arrayLength(); i++) {
+				dataset.addValue(clickedPlanet.getSpeed(i), "IDK", String.valueOf(clickedPlanet.getTime(i)));
+			}
+			this.dataset = dataset;
+			return dataset;
+		}
+
+		return null;
+	}
+
+	public void setSpeedAndTime(int sec) {
+		for (Planet planet : planets) {
+			planet.setSpeed((Math.sqrt((planet.getxSpeed() * planet.getxSpeed()) + (planet.getySpeed() * planet.getySpeed())) * 3.6));
+			planet.setTime(sec);
+		}
+	}
+
+	public void setClickedPlanetToNull() {
+		this.clickedPlanet = null;
+	}
+
+	public Planet getClickedPlanet() {
+		return this.clickedPlanet;
 	}
 }

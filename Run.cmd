@@ -1,1 +1,1 @@
-java -cp .\bin Galaxy_SP2022 %* data/solar.csv
+java -cp .\bin;lib\jfreechart-1.5.3.jar Galaxy_SP2022 %* data/solar.csv

@@ -1,3 +1,6 @@
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -14,6 +17,8 @@ public class Galaxy_SP2022 {
 	private static boolean isStopped = false;
 	/** Kontrola, jestli byl timer zastaven v minulém běhu */
 	private static boolean wasStopped;
+	static JFrame graph = new JFrame();
+	static ChartPanel chartPanel;
 
 	/**
 	 * Hlavní spouštěcí metoda pro spuštění animace a její automatické překreslování
@@ -27,9 +32,12 @@ public class Galaxy_SP2022 {
 		okno.setSize(640, 480);
 
 		DrawingPanel panel = new DrawingPanel(args[0]);
+		//DrawingPanel panel = new DrawingPanel("data/collision.csv");
 		okno.add(panel);
 
 		okno.pack();
+
+		chartPanel = new ChartPanel(panel.makeLineChart());
 
 		okno.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		okno.setLocationRelativeTo(null);
@@ -65,11 +73,28 @@ public class Galaxy_SP2022 {
 
 				startTime = System.currentTimeMillis();
 				panel.repaint();
+				chartPanel.setChart(panel.makeLineChart());
 
 				setWasStopped(false);
 			}
 		});
 		timer.start();
+
+		//Nastavení timeru a vytvoření actionListeneru
+		Timer secTimer = new Timer(1000, new ActionListener() {
+			int sec = 1;
+
+			/**
+			 * Přepsaná metoda pro překreselní panelu
+			 * @param e action event
+			 */
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				panel.setSpeedAndTime(sec);
+				sec++;
+			}
+		});
+		secTimer.start();
 
 		//Zachycení stisku mezerníku a zavolání zastavení animace
 		KeyboardFocusManager.getCurrentKeyboardFocusManager()
@@ -81,7 +106,6 @@ public class Galaxy_SP2022 {
 							startAnimation();
 						}
 					}
-
 					return false;
 				});
 
@@ -93,6 +117,7 @@ public class Galaxy_SP2022 {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				panel.isPlanetHit(e.getX(), e.getY());
+				createNewWindow(panel);
 			}
 
 			@Override
@@ -145,5 +170,24 @@ public class Galaxy_SP2022 {
 		timer.stop();
 		isStopped = true;
 		setWasStopped(true);
+	}
+
+	public static void createNewWindow(DrawingPanel panel) {
+		graph.setTitle("Graf");
+		graph.setSize(400, 300);
+
+		chartPanel = new ChartPanel(panel.makeLineChart());
+
+		graph.add(chartPanel);
+
+		graph.addWindowListener(new java.awt.event.WindowAdapter() {
+			@Override
+			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+				panel.setClickedPlanetToNull();
+				graph.dispose();
+			}
+		});
+		graph.setLocationRelativeTo(null);
+		graph.setVisible(true);
 	}
 }
